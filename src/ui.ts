@@ -1,12 +1,18 @@
-import { puntosTotales, setPuntosTotales } from "./model";
-import { dameCarta } from "./main";
+import { puntosTotales, setPuntosTotales, partida } from "./model";
+import {
+  generarNumeroAleatorio,
+  generarValorCarta,
+  calcularPuntuacion,
+} from "./motor";
 
-// EMPEZAR PARTIDA
-export function resetPartida() {
-  habilitarBotonDameCarta(false);
-  resetPuntuacion();
-  verMensaje("");
-  habilitarBotonQueHubieraPasado(true);
+// FUNCIÓN PRINCIPAL
+export function dameCarta() {
+  let numeroAleatorio: number = generarNumeroAleatorio();
+  const carta: number = generarValorCarta(numeroAleatorio);
+  pintarUrlCarta(carta);
+  const puntos = calcularPuntuacion(carta);
+  setPuntosTotales(puntos);
+  finalMano();
 }
 
 // MOSTRAR MENSAJE DE PUNTUACIÓN SOLO
@@ -36,23 +42,23 @@ export function verMensaje(mensaje: string) {
 
 // MENSAJE PLANTARSE
 export function mensajePlantarse() {
-  if (puntosTotales < 4) {
+  if (partida.puntosTotales < 4) {
     verMensaje("Has sido muy conservador");
   }
-  if (puntosTotales > 3.5 && puntosTotales < 6) {
+  if (partida.puntosTotales > 3.5 && puntosTotales < 6) {
     verMensaje("Te ha entrado el canguelo eh?");
   }
-  if (puntosTotales > 5.5 && puntosTotales < 7.5) {
+  if (partida.puntosTotales > 5.5 && puntosTotales < 7.5) {
     verMensaje("Casi, casi...");
   }
-  if (puntosTotales === 0) {
+  if (partida.puntosTotales === 0) {
     verMensaje("");
   }
 }
 
 // PUNTUACIÓN A CERO OTRA VEZ
 export function resetPuntuacion() {
-  puntosTotales === 0;
+  partida.puntosTotales === 0;
   mostrarMensaje(setPuntosTotales(0));
   pintarUrlCarta(0);
 }
@@ -135,15 +141,7 @@ export function cargarPartida() {
   if (botonFuturo) {
     botonFuturo.addEventListener("click", dameCarta);
   }
-  // BOTÓN NUEVA PARTIDA
-  const botonNuevaPartida = document.getElementById("nuevaPartida");
 
-  if (botonNuevaPartida) {
-    botonNuevaPartida.addEventListener("click", resetPartida);
-  }
-  if (botonNuevaPartida) {
-    botonNuevaPartida.addEventListener("click", mensajePlantarse);
-  }
   // BOTÓN DAME CARTA NOS MUESTRA EL VALOR DE LA CARTA Y PASA CARTA
   const botonValor = document.getElementById("botonDameCarta");
 
@@ -184,4 +182,18 @@ function revisarMano() {
 export function finalMano() {
   mostrarMensaje(puntosTotales);
   revisarMano();
+}
+// BOTÓN NUEVA PARTIDA
+const botonNuevaPartida = document.getElementById("nuevaPartida");
+
+if (botonNuevaPartida) {
+  botonNuevaPartida.addEventListener("click", resetPartida);
+}
+
+// EMPEZAR PARTIDA
+function resetPartida() {
+  habilitarBotonDameCarta(false);
+  resetPuntuacion();
+  verMensaje("");
+  habilitarBotonQueHubieraPasado(true);
 }
